@@ -5,6 +5,7 @@ import mysql.connector
 from pathlib import Path
 from abc import abstractmethod
 from dotenv import load_dotenv
+from typing import Type
 
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / '.env')
@@ -28,7 +29,7 @@ class SingletonConnector:
     def connect(self):
         ...
 
-    def __execute(self, query: str, data: tuple = None, fetch: bool = False, commit: bool = False) -> None | str:
+    def __execute(self, query: str, data: tuple = None, fetch: bool = False, commit: bool = False) -> None | list[tuple] | str:
         try:
             self.__connection = self.connect()
             self.__cursor = self.__connection.cursor()
@@ -52,13 +53,15 @@ class SingletonConnector:
         return self.__execute(query, commit=True)
 
     def save(self, query: str, data: tuple) -> None | tuple:
-        return self.__execute(query, data, commit=True, fetch=True)
+        item_saved =  self.__execute(query, data, commit=True, fetch=True)
+        return item_saved[0] if item_saved else None
 
-    def fetchall(self, query: str) -> None | tuple:
+    def fetchall(self, query: str) -> None | list[tuple]:
         return self.__execute(query, fetch=True)
 
-    def fetchone(self, query: str, data: tuple) -> None | tuple:
-        return self.__execute(query, data, fetch=True)
+    def fetchone(self, query: str, data: Type[tuple | str | int]) -> None | tuple:
+        fetched_item = self.__execute(query, data if isinstance(data, tuple) else (data,), fetch=True)
+        return fetched_item[0] if fetched_item else None
 
 
 class SQLiteConnector(SingletonConnector):
