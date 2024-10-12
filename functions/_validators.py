@@ -14,6 +14,7 @@ def validate_fields(page: Page, *args: TextField) -> None | bool:
     Checks the form field values. Returns True if the form field values are filled in.
     :param page: Flet library Page object
     :param args: Form TextFields.
+
     """
     try:
         for item in args:
