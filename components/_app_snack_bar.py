@@ -1,5 +1,4 @@
 from typing import Callable
-
 from flet import SnackBar, Text, TextSpan, Page, TextStyle, FontWeight, colors
 
 def custom_snack_bar(function: Callable, message: str, page: Page) -> None:
