@@ -35,7 +35,7 @@ class SingletonConnector:
             self.__cursor = self.__connection.cursor()
             self.__cursor.execute(query, data) if data else self.__cursor.execute(query)
         except (sqlite3.Error, psycopg2.Error, mysql.connector.Error, Exception) as error:
-            return f'{self.__class__.__name__} ERROR_1: {error}'
+            print(f'{self.__class__.__name__} ERROR_1: {error}')
         else:
             if fetch:
                 self.__response = self.__cursor.fetchall()
@@ -47,7 +47,7 @@ class SingletonConnector:
                 self.__cursor.close()
                 self.__connection.close()
             except (sqlite3.Error, psycopg2.Error, mysql.connector.Error, Exception) as error:
-                return f'{self.__class__.__name__} ERROR_2: {error}'
+                print(f'{self.__class__.__name__} ERROR_2: {error}')
 
     def create(self, query: str) -> None:
         return self.__execute(query, commit=True)
