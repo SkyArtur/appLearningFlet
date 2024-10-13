@@ -46,9 +46,19 @@ def save_user(page: Page, first_name: str, last_name: str, birth: str, *args: st
 
 
 def check_login_data(page: Page, username: TextField, password: TextField):
+    """
+    Validates the login credentials by checking the username (or email) and password against the stored data
+    in the database. Returns True if the credentials are valid.
+    :param page: A Page object from the Flet library.
+    :param username: A TextField object representing the username or email input.
+    :param password: A TextField object representing the password input.
+    :return: True if the credentials are valid, otherwise raises a ValueError.
+    """
     try:
+        # Query to retrieve the stored password based on the username or email
         query = 'select password from users where username = ? or email = ?;'
         _password = dbSQLite.fetchone(query, (username.value, username.value))
+        # Check if the user exists and if the password is valid
         if not _password:
             raise ValueError('User not found')
         elif not pbkdf2.verify(password.value, _password[0]):
