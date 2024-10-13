@@ -117,3 +117,24 @@ def validate_password(password: TextField, confirm: TextField, page: Page) -> No
             return pbkdf2.hash(password.value)
     except ValueError as error:
         custom_snack_bar(validate_password, f'{error}.', page)
+
+#-----------------------------------------------------------------------------------------------------------------------
+#   VALIDAÇÃO DO CAMPO DE NOME DE USUÁRIO
+#-----------------------------------------------------------------------------------------------------------------------
+
+def validate_username(username: TextField, page: Page) -> None | str:
+    """
+    Validates the username entered in the form. Checks if the username is already registered in the database.
+    Returns the username if it is valid.
+    :param username: A TextField object representing the username input.
+    :param page: A Page object from the Flet library.
+    :return: The username string if valid, otherwise raises a ValueError or TypeError.
+    """
+    try:
+        # Check if the username is already registered in the database
+        if dbSQLite.fetchone('select id from users where username = ?;', username.value):
+            raise ValueError('Username already registered!')
+        else:
+            return username.value
+    except (TypeError, ValueError, AttributeError) as error:
+        custom_snack_bar(validate_username, f'{error}.', page)
