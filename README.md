@@ -1,4 +1,5 @@
 # AppLearningFlet
 
 Aplicação desenvolvida durante aprendizado da utilização da biblioteca "flet" do python para desenvolvimento de interfaces gráficas.
-![Captura de tela 2024-10-12 230412](https://github.com/user-attachments/assets/81916f34-9de3-4aec-831a-be4576b53152)
+
+![Captura de tela 2024-10-12 230641](https://github.com/user-attachments/assets/457f5ed3-36f3-44b9-a562-ce14fd5fe260)
