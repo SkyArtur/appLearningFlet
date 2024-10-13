@@ -1,4 +1,5 @@
-from flet import Page
+from flet import Page, TextField
+from passlib.hash import pbkdf2_sha256 as pbkdf2
 from components import custom_snack_bar
 from database import dbSQLite
 
@@ -40,5 +41,19 @@ def save_user(page: Page, first_name: str, last_name: str, birth: str, *args: st
         new += [i for i in args]
         # Execute the database insert operation
         dbSQLite.save(query, tuple(new))
+    except (ValueError, IndexError, Exception) as error:
+        custom_snack_bar(save_user, f'{error}.', page)
+
+
+def check_login_data(page: Page, username: TextField, password: TextField):
+    try:
+        query = 'select password from users where username = ? or email = ?;'
+        _password = dbSQLite.fetchone(query, (username.value, username.value))
+        if not _password:
+            raise ValueError('User not found')
+        elif not pbkdf2.verify(password.value, _password[0]):
+            raise ValueError('Invalid password')
+        else:
+            return True
     except (ValueError, IndexError, Exception) as error:
         custom_snack_bar(save_user, f'{error}.', page)
