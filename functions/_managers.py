@@ -67,3 +67,23 @@ def check_login_data(page: Page, username: TextField, password: TextField):
             return True
     except (ValueError, IndexError, Exception) as error:
         custom_snack_bar(save_user, f'{error}.', page)
+
+
+def get_all_profile_not_users(page: Page, *args: str) -> list[dict[str, str]] | None:
+    """
+    Retrieves all profiles that are not associated with any users from the database. Returns a list of dictionaries
+    containing profile information (ID, first name, last name, birth date).
+
+    :param page: A Page object from the Flet library.
+    :param args: Optional arguments (unused in this function).
+    :return: A list of dictionaries with profile data or None if an exception occurs.
+    """
+    try:
+        query = '''
+            select p.id, p.first_name, p.last_name, p.birth from profiles p
+            left join users u on p.id = u.id_profile
+            where u.id_profile is null;
+        '''
+        return [dict(id=i[0], first_name=i[1], last_name=i[2], birth_date=i[3]) for i in dbSQLite.fetchall(query)]
+    except (ValueError, IndexError, Exception) as error:
+        custom_snack_bar(get_all_profile_not_users, f'{error}.', page)
