@@ -1,5 +1,5 @@
 from flet_core import Page, DataTable, DataColumn, Text, DataRow, DataCell
-from functions import get_all_profile_not_users
+from functions import get_data_table_profiles
 
 
 
@@ -13,15 +13,6 @@ def table_profiles(page: Page):
         ],
         rows=[]
     )
-    for profile in get_all_profile_not_users(page):
-        _table.rows.append(
-            DataRow(
-                cells=[
-                    DataCell(Text(str(profile['id']))),
-                    DataCell(Text(str(profile['first_name']))),
-                    DataCell(Text(str(profile['last_name']))),
-                    DataCell(Text(str(profile['birth_date']))),
-                ]
-            )
-        )
+    get_data_table_profiles(page, _table)
+    page.update()
     return _table

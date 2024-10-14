@@ -1,4 +1,4 @@
-from flet import Page, TextField
+from flet import Page, TextField, DataRow, DataCell, Text, DataTable
 from passlib.hash import pbkdf2_sha256 as pbkdf2
 from components import custom_snack_bar
 from database import dbSQLite
@@ -69,21 +69,37 @@ def check_login_data(page: Page, username: TextField, password: TextField):
         custom_snack_bar(save_user, f'{error}.', page)
 
 
-def get_all_profile_not_users(page: Page, *args: str) -> list[dict[str, str]] | None:
+def get_data_table_profiles(page: Page, table: DataTable, *args: str) -> None:
     """
-    Retrieves all profiles that are not associated with any users from the database. Returns a list of dictionaries
-    containing profile information (ID, first name, last name, birth date).
+    Retrieves all profiles that are not associated with any users from the database. Populates the provided DataTable
+    with profile information (ID, first name, last name, birth date).
 
     :param page: A Page object from the Flet library.
+    :param table: A DataTable object to be populated with profile data.
     :param args: Optional arguments (unused in this function).
-    :return: A list of dictionaries with profile data or None if an exception occurs.
+    :return: None
     """
     try:
+        # SQL query to select profiles not linked to any users
         query = '''
             select p.id, p.first_name, p.last_name, p.birth from profiles p
             left join users u on p.id = u.id_profile
             where u.id_profile is null;
         '''
-        return [dict(id=i[0], first_name=i[1], last_name=i[2], birth_date=i[3]) for i in dbSQLite.fetchall(query)]
+        # Fetch profile data and convert to a list of dictionaries
+        profiles = [dict(id=i[0], first_name=i[1], last_name=i[2], birth_date=i[3]) for i in dbSQLite.fetchall(query)]
+        # Clear existing rows in the DataTable and populate it with the retrieved profiles
+        table.rows.clear()
+        for profile in profiles:
+            table.rows.append(
+                DataRow(
+                    cells=[
+                        DataCell(Text(str(profile['id']))),
+                        DataCell(Text(str(profile['first_name']))),
+                        DataCell(Text(str(profile['last_name']))),
+                        DataCell(Text(str(profile['birth_date']))),
+                    ]
+                )
+            )
     except (ValueError, IndexError, Exception) as error:
-        custom_snack_bar(get_all_profile_not_users, f'{error}.', page)
+        custom_snack_bar(get_data_table_profiles, f'{error}.', page)

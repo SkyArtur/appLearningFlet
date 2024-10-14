@@ -73,18 +73,7 @@ def form_profile(page: Page, table: DataTable):
             save_profile(page, _first_name, _last_name, _birth_date.isoformat())
         for field in fields:
             field.value = None
-        table.rows.clear()
-        for profile in get_all_profile_not_users(page):
-            table.rows.append(
-                DataRow(
-                    cells=[
-                        DataCell(Text(str(profile['id']))),
-                        DataCell(Text(str(profile['first_name']))),
-                        DataCell(Text(str(profile['last_name']))),
-                        DataCell(Text(str(profile['birth_date']))),
-                    ]
-                )
-            )
+        get_data_table_profiles(page, table)
         page.update()
 
     first_name = custom_text_field('Nome', width=300)
