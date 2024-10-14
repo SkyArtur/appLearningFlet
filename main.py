@@ -7,7 +7,20 @@ def app_learning(page: ft.Page):
     page.overlay.clear()
     page.window.width = 980
     page.window.height = 730
-    page.add(ft.Text('aplicação principal'))
+    page.vertical_alignment = ft.MainAxisAlignment.SPACE_BETWEEN
+    page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
+    table = table_profiles(page)
+    page.add(ft.Row(controls=[
+        form_profile(page, table),
+        ft.Column(
+            controls=[table],
+            width=580,
+            height=700,
+            scroll=ft.ScrollMode.AUTO,
+            alignment= ft.MainAxisAlignment.START,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
+    ]))
 
 
 def login(page: ft.Page):
@@ -39,7 +52,7 @@ def register_new_user(page: ft.Page):
     page.window.maximizable = False
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    form_register_new_user(page)
+    form_register_new_user(page, login)
     page.update()
 
 
