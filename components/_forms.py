@@ -1,5 +1,5 @@
 from typing import Callable
-from flet import Page, Text, ElevatedButton, Column, CrossAxisAlignment
+from flet import Page, Text, ElevatedButton, Column, CrossAxisAlignment, DataTable, DataRow, DataCell
 from ._fields import custom_text_field, custom_password_field
 from ._rows import form_row
 from functions import *
@@ -62,7 +62,7 @@ def form_login(page: Page, function: Callable):
 
 
 
-def form_profile(page: Page, function: Callable = None):
+def form_profile(page: Page, table: DataTable):
     def _save_profile(event):
         fields = [first_name, last_name, birth_date]
         if not validate_fields(page, *fields): return
@@ -73,6 +73,18 @@ def form_profile(page: Page, function: Callable = None):
             save_profile(page, _first_name, _last_name, _birth_date.isoformat())
         for field in fields:
             field.value = None
+        table.rows.clear()
+        for profile in get_all_profile_not_users(page):
+            table.rows.append(
+                DataRow(
+                    cells=[
+                        DataCell(Text(str(profile['id']))),
+                        DataCell(Text(str(profile['first_name']))),
+                        DataCell(Text(str(profile['last_name']))),
+                        DataCell(Text(str(profile['birth_date']))),
+                    ]
+                )
+            )
         page.update()
 
     first_name = custom_text_field('Nome', width=300)
