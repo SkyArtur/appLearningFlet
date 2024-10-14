@@ -1,11 +1,11 @@
 from typing import Callable
-from flet import Page, Text, ElevatedButton
+from flet import Page, Text, ElevatedButton, Column, CrossAxisAlignment
 from ._fields import custom_text_field, custom_password_field
 from ._rows import form_row
 from functions import *
 
 
-def form_register_new_user(page: Page):
+def form_register_new_user(page: Page, function: Callable):
     def save_new_user(event):
         _fields = [first_name, last_name, birth_date, username, email, password, confirm_password]
         if not validate_fields(page, *_fields): return
@@ -17,6 +17,7 @@ def form_register_new_user(page: Page):
         elif not (_password := validate_password(_fields[5], _fields[6], page)): return
         else:
             save_user(page, _first_name, _last_name, _birth_date.isoformat(), _username, _email, _password)
+            function(page)
         for field in _fields:
             field.value = None
         page.update()
@@ -57,4 +58,33 @@ def form_login(page: Page, function: Callable):
         form_row(Text('Login', size=30)),
         form_row(username, password),
         form_row(btn_login),
+    )
+
+
+
+def form_profile(page: Page, function: Callable = None):
+    def _save_profile(event):
+        fields = [first_name, last_name, birth_date]
+        if not validate_fields(page, *fields): return
+        elif not (_first_name := validate_names(fields[0], page)): return
+        elif not (_last_name := validate_names(fields[1], page)): return
+        elif not (_birth_date := validate_date(fields[2], page)): return
+        else:
+            save_profile(page, _first_name, _last_name, _birth_date.isoformat())
+        for field in fields:
+            field.value = None
+        page.update()
+
+    first_name = custom_text_field('Nome', width=300)
+    last_name = custom_text_field('Sobrenome', width=300)
+    birth_date = custom_text_field('Data de Nascimento', width=300)
+    btn_save = ElevatedButton(text='Salvar', on_click=_save_profile, width=250, height=40)
+    return Column(
+        controls=[
+            Text(value='Registrar Perfil', size=35),
+            form_row(first_name, last_name, birth_date, btn_save)
+        ],
+        width=360,
+        horizontal_alignment=CrossAxisAlignment.CENTER,
+        spacing=30
     )
